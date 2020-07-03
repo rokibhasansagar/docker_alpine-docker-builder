@@ -1,0 +1,24 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: docker:stable-git
+    steps:
+      - checkout
+      - run: apk --update add make curl
+      - setup_remote_docker:
+          version: 19.03.8
+      - run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      - run: docker run --rm --privileged multiarch/qemu-user-static:latest --reset
+      - run: echo ".git" > .dockerignore
+      - run: make -j$(nproc --all) prepare
+      - run: make -j$(nproc --all) build-push-all
+      - run: make -j$(nproc --all) inspect
+      - run: make -j$(nproc --all) test
+workflows:
+  version: 2
+  dockerbase:
+    jobs:
+      - build:
+          context: personal-envs
