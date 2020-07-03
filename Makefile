@@ -1,4 +1,4 @@
-BUILDX_VER=v0.4.1
+BUILDX_VER=v0.4.0
 IMAGE_NAME=alpine-docker-runner
 TAG?=latest
 SNAP=$(shell date +%Y.%j)
