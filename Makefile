@@ -1,4 +1,4 @@
-BUILDX_VER=v0.4.0
+BUILDX_VER=v0.4.1
 IMAGE_NAME=alpine-docker-runner
 TAG?=latest
 SNAP=$(shell date +%Y.%j)
@@ -11,7 +11,9 @@ install:
 
 prepare: install
 	docker context create old-style
-	docker buildx create old-style --use --platform linux/amd64,linux/386,linux/arm64/v8,linux/arm/v7,linux/arm/v6,linux/ppc64le,linux/s390x
+	docker buildx create old-style --use \
+		--platform linux/amd64,linux/386,linux/arm64/v8,linux/arm/v7,linux/arm/v6,linux/ppc64le,linux/s390x \
+		--buildkitd-flags '--debug'
 	docker buildx inspect --bootstrap
 
 build-push-minimum:
