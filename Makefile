@@ -1,5 +1,5 @@
 BUILDX_VER=v0.4.1
-IMAGE_NAME=alpine-docker-runner
+IMAGE_NAME=droid-runner
 TAG?=latest
 SNAP=$(shell date +%Y.%j)
 VER='1.0'
