@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run: apk --update add make curl
       - setup_remote_docker:
-          version: 19.03.8
+          version: 19.03.13
       - run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       - run: docker run --rm --privileged multiarch/qemu-user-static:latest --reset
       - run: echo ".git" > .dockerignore
@@ -19,6 +19,17 @@ jobs:
 workflows:
   version: 2
   dockerbase:
+    jobs:
+      - build:
+          context: personal-envs
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
       - build:
           context: personal-envs
