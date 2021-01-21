@@ -43,7 +43,7 @@ RUN set -xe \
   && chmod 0440 /etc/sudoers.d/builder
 
 RUN set -xe \
-  && curl -sL https://github.com/GerritCodeReview/git-repo/raw/stable/repo -o /usr/bin/repo \
+  && curl -sL https://gerrit.googlesource.com/git-repo/+/refs/heads/stable/repo?format=TEXT | base64 --decode > /usr/bin/repo \
   && curl -s https://api.github.com/repos/tcnksm/ghr/releases/latest | grep "browser_download_url" | grep "amd64.tar.gz" | cut -d '"' -f 4 | wget -qi - \
   && tar -xzf ghr_*_amd64.tar.gz \
   && cp ghr_*_amd64/ghr /usr/bin/ \
