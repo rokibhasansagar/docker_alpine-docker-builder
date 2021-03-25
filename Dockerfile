@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM docker:stable-git
+FROM --platform=$BUILDPLATFORM docker:20-git
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -11,7 +11,7 @@ ARG VERSION
 LABEL org.label-schema.build-date=$BUILD_DATE \
   org.label-schema.name="Droid Runner" \
   org.label-schema.description="Docker runner based on Alpine image" \
-  org.label-schema.url="https://rokibhasansagar.github.io/docker_alpine-docker-builder" \
+  org.label-schema.url="https://rokibhasansagar.github.io/docker_droid-runner" \
   org.label-schema.vcs-ref=$VCS_REF \
   org.label-schema.vcs-url=$VCS_URL \
   org.label-schema.vendor="Rokib Hasan Sagar" \
@@ -29,9 +29,9 @@ RUN set -xe \
 
 # docker and git are pre-installed
 RUN apk add --no-cache --purge -uU \
-    bash make curl ca-certificates wget \
+    bash make curl ca-certificates jq wget \
     alpine-sdk alpine-base coreutils binutils libc-dev util-linux ncurses-libs \
-    rsync sshpass openssh openssl gnupg zlib zip unzip tar xz \
+    rsync sshpass openssh openssl gnupg zlib zip unzip tar xz zstd \
     sudo shadow gawk python3 py3-pip \
   && rm -rf /var/cache/apk/* /tmp/* 
 
@@ -44,7 +44,8 @@ RUN set -xe \
 
 RUN set -xe \
   && curl -sL https://gerrit.googlesource.com/git-repo/+/refs/heads/stable/repo?format=TEXT | base64 --decode > /usr/bin/repo \
-  && curl -s https://api.github.com/repos/tcnksm/ghr/releases/latest | grep "browser_download_url" | grep "amd64.tar.gz" | cut -d '"' -f 4 | wget -qi - \
+  && curl -s https://api.github.com/repos/tcnksm/ghr/releases/latest \
+    | jq -r '.assets[] | select(.browser_download_url | contains("linux_amd64")) | .browser_download_url' | wget -qi - \
   && tar -xzf ghr_*_amd64.tar.gz \
   && cp ghr_*_amd64/ghr /usr/bin/ \
   && rm -rf ghr_* \
